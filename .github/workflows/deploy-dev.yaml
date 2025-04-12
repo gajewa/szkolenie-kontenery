@@ -31,7 +31,11 @@ jobs:
     
     - name: Deploy SAM application
       run: sam build && sam deploy
+  
   push-image:
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
