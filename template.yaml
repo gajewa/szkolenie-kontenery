@@ -1,3 +1,7 @@
+
+# definicja 1 pełnego środowiska aplikacji, wszystkie elementy potrzebe do uruchomienia aplikacji
+
+
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: SAM Template for Astro project deployment with S3 and CloudFront (No custom domain)
@@ -8,27 +12,56 @@ Parameters:
     Default: dev
     Description: The environment to deploy to (e.g., dev, prod)
 
-
 Resources:
 
-  BackendRepository: 
+  BackendRepository:
     Type: AWS::ECR::Repository
-
 
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
+      ClusterName: maciek-cluster-name-1
       CapacityProviders:
         - FARGATE
-        - FARGATE_SPOT
       DefaultCapacityProviderStrategy:
         - CapacityProvider: FARGATE
-          Weight: 1
-        - CapacityProvider: FARGATE_SPOT
           Weight: 1
       Configuration:
         ExecuteCommandConfiguration:
           Logging: DEFAULT
+
+  BackendTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Name: container-maciek-1
+          Image: !GetAtt BackendRepository.RepositoryUri
+          Cpu: 1024
+          PortMappings:
+            - ContainerPort: 8080
+              HostPort: 8080
+              Protocol: tcp
+          Memory: 3072
+          Essential: true
+      RequiresCompatibilities:
+        - FARGATE
+
+  ECSService:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      ServiceName: maciek-1-service
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - sg-0c32195644e09dc2f
+          Subnets:
+            - subnet-0b17cc250d8d9d730
+            - subnet-08f5b60f4836afd4b
+      TaskDefinition: !Ref BackendTaskDefinition
 
 Outputs:
   BackendRepositoryUri:
@@ -36,7 +69,7 @@ Outputs:
     Value: !GetAtt BackendRepository.RepositoryUri
     Export:
       Name: !Sub "${ProjectName}-BackendRepositoryUri"
-  
+
   BackendRepositoryName:
     Description: Name of the ECR repository
     Value: !Ref BackendRepository
