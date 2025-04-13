@@ -20,7 +20,6 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: maciek-cluster-name-1
       CapacityProviders:
         - FARGATE
       DefaultCapacityProviderStrategy:
@@ -34,7 +33,7 @@ Resources:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
-        - Name: container-maciek-1
+        - Name: Backend
           Image: !GetAtt BackendRepository.RepositoryUri
           Cpu: 1024
           PortMappings:
@@ -43,13 +42,14 @@ Resources:
               Protocol: tcp
           Memory: 3072
           Essential: true
+      NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
 
   ECSService:
     Type: 'AWS::ECS::Service'
     Properties:
-      ServiceName: maciek-1-service
+      ServiceName: backend-service
       Cluster: !Ref ECSCluster
       DesiredCount: 1
       LaunchType: FARGATE
@@ -57,10 +57,10 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - sg-0c32195644e09dc2f
+            - sg-0b60fce6753635576
           Subnets:
-            - subnet-0b17cc250d8d9d730
-            - subnet-08f5b60f4836afd4b
+            - subnet-00169698a4f6d948b
+            - subnet-0ffb092ca9af6b446
       TaskDefinition: !Ref BackendTaskDefinition
 
 Outputs:
