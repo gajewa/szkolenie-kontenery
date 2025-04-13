@@ -102,7 +102,7 @@ Resources:
       Port: 8080
       Protocol: HTTP
       TargetType: ip
-      VpcId: vpc-05cf935bf6e48e70a
+      VpcId: vpc-0b80c00374faf98f7
       HealthCheckPath: /
       HealthCheckIntervalSeconds: 30
       HealthCheckTimeoutSeconds: 5
@@ -123,7 +123,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group for the ALB
-      VpcId: vpc-05cf935bf6e48e70a
+      VpcId: vpc-0b80c00374faf98f7
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
