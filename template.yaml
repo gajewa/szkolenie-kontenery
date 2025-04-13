@@ -35,14 +35,14 @@ Resources:
       ContainerDefinitions:
         - Name: Backend
           Image: !GetAtt BackendRepository.RepositoryUri
-          Cpu: 1024
           PortMappings:
             - ContainerPort: 8080
               HostPort: 8080
               Protocol: tcp
-          Memory: 3072
           Essential: true
       NetworkMode: awsvpc
+      Cpu: 1024
+      Memory: 3072
       RequiresCompatibilities:
         - FARGATE
 
